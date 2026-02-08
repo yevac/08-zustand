@@ -48,7 +48,7 @@ export default function NoteForm() {
       <label className={css.label}>
         Content
         <textarea
-          name="content" 
+          name="content" required
           rows={5}
           value={draft.content}
           onChange={(e) => setDraft({ content: e.target.value })}
