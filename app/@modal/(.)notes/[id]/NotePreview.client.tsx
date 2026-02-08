@@ -7,7 +7,9 @@ import css from "./NotePreview.module.css";
 import { fetchNoteById } from "@/lib/api";
 import Modal from "@/components/Modal/Modal";
 
-export default function NotePreviewClient() {
+type NotePreviewClientProps = Record<string, never>;
+
+export default function NotePreviewClient({}: NotePreviewClientProps) {
 	const { id } = useParams<{ id: string }>();
   const router = useRouter();
   const handleClose = () => router.back();
@@ -24,9 +26,8 @@ export default function NotePreviewClient() {
   return <p>Something went wrong.</p>; 
 }
 
-  const formattedDate = note.updatedAt
-    ? `Updated at: ${new Date(note.updatedAt).toLocaleDateString()}`
-    : `Created at: ${new Date(note.createdAt).toLocaleDateString()}}`;
+  const formattedDate = `Created at: ${new Date(note.createdAt).toLocaleDateString()}`;
+  
 
   return (
     <Modal closeModal={handleClose}>

@@ -6,10 +6,6 @@ import { useParams } from 'next/navigation';
 import { fetchNoteById } from "@/lib/api";
 import css from "./NoteDetails.module.css";
 
-interface NoteDetailsClientProps {
-  id: string;
-}
-
 export default function NoteDetailsClient() {
   const router = useRouter();
     const handleClose = () => router.back();

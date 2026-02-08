@@ -1,41 +1,45 @@
-import type { Metadata } from 'next';
-import { dehydrate, HydrationBoundary, QueryClient, } from "@tanstack/react-query";
-import { fetchNoteById } from "@/lib/api";
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { QueryClient, dehydrate, HydrationBoundary } from "@tanstack/react-query";
+
 import NoteDetailsClient from "./NoteDetails.client";
+import { fetchNoteById } from "@/lib/api";
 
-type NoteDetailsPageProps = {
-  params: Promise<{
-    id: string;
-  }>;
-};
+const OG_IMAGE = "https://ac.goit.global/fullstack/react/notehub-og-meta.jpg";
 
-type Props = {
-  params: {
-    slug: string[];
-  };
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: { id: string };
+}): Promise<Metadata> {
+  try {
+    const note = await fetchNoteById(params.id);
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const tag = params.slug?.[0] ?? 'all';
+    const title = note.title || "Note";
+    const description =
+      note.content?.slice(0, 140) || "Note details in NoteHub.";
 
-  return {
-    title: `Notes filter: ${tag}`,
-    description: `Viewing notes filtered by ${tag}`,
-    openGraph: {
-      title: `Notes filter: ${tag}`,
-      description: `Viewing notes filtered by ${tag}`,
-      url: `/notes/filter/${tag}`,
-      images: [
-        {
-          url: 'https://ac.goit.global/fullstack/react/notehub-og-meta.jpg',
-        },
-      ],
-    },
-  };
+    return {
+      title,
+      description,
+      openGraph: {
+        title,
+        description,
+        url: `https://notehub-public.goit.study/notes/${params.id}`,
+        images: [OG_IMAGE],
+      },
+    };
+  } catch {
+    notFound();
+  }
 }
 
-export default async function NoteDetailsPage({ params }: NoteDetailsPageProps) {
-  const { id } = await params;
+export default async function Page({
+  params,
+}: {
+  params: { id: string };
+}) {
+  const { id } = params;
 
   const queryClient = new QueryClient();
 
