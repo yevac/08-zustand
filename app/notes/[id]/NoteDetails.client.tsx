@@ -2,15 +2,17 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { useParams } from 'next/navigation';
 import { fetchNoteById } from "@/lib/api";
 import css from "./NoteDetails.module.css";
 
-export default function NoteDetailsClient() {
+type Props = {
+  id: string;
+};
+
+export default function NoteDetailsClient({ id }: Props) {
   const router = useRouter();
     const handleClose = () => router.back();
 
-  const { id } = useParams<{ id: string }>();
   const {
     data: note,
     isLoading,

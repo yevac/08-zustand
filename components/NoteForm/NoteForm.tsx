@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { createNote } from "@/lib/api";
 import { useNoteStore } from "@/lib/store/noteStore";
-import { useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { NoteTag } from "@/types/note";
 import css from "./NoteForm.module.css";
 
@@ -15,27 +15,29 @@ export default function NoteForm() {
   const setDraft = useNoteStore((state) => state.setDraft);
   const clearDraft = useNoteStore((state) => state.clearDraft);
 
-  async function handleSubmit(formData: FormData) {
-    const note = {
-      title: formData.get("title") as string,
-      content: formData.get("content") as string,
-      tag: formData.get("tag") as NoteTag,
-    };
-
-    await createNote(note);
-
-    queryClient.invalidateQueries({ queryKey: ["notes"] });
-
+  const mutation = useMutation({
+  mutationFn: createNote,
+  onSuccess: async () => {
+    await queryClient.invalidateQueries({ queryKey: ["notes"] });
     clearDraft();
     router.back();
-  }
+  },
+});
+  
+  async function handleSubmit() {
+  mutation.mutate({
+    title: draft.title.trim(),
+    content: draft.content.trim(),
+    tag: draft.tag,
+  });
+}
 
   return (
     <form action={handleSubmit} className={css.form}>
       <label className={css.label}>
         Title
         <input
-          name="title"
+          name="title" required
           type="text"
           value={draft.title}
           onChange={(e) => setDraft({ title: e.target.value })}
@@ -46,7 +48,7 @@ export default function NoteForm() {
       <label className={css.label}>
         Content
         <textarea
-          name="content"
+          name="content" 
           rows={5}
           value={draft.content}
           onChange={(e) => setDraft({ content: e.target.value })}

@@ -1,10 +1,17 @@
+import { NoteTag } from '@/types/note';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-export const initialDraft = {
-  title: '',
-  content: '',
-  tag: 'Todo',
+type Draft = {
+  title: string;
+  content: string;
+  tag: NoteTag;
+};
+
+export const initialDraft: Draft = {
+  title: "",
+  content: "",
+  tag: "Todo",
 };
 
 interface NoteStore {
